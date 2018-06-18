@@ -1,3 +1,13 @@
+### 1.1.0 (2018-06-18)
+
+##### Chores
+
+* **deps:**  update dependency lint-staged to v7.2.0 ([5ca23175](https://github.com/lgaticaq/sequelize-graphql-tools/commit/5ca231757459c1e7c0ef7f06f0217e2e162906c0))
+
+##### Bug Fixes
+
+* **resolver:**  fix children resolvers ([910429a0](https://github.com/lgaticaq/sequelize-graphql-tools/commit/910429a0e25570257ca70bc882d6db04e58d3e22))
+
 ## 1.0.0 (2018-06-06)
 
 ##### Chores
