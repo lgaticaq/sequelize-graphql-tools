@@ -10,7 +10,11 @@ const {
   GraphQLObjectType,
   GraphQLString
 } = require('graphql/type')
-const { TypeComposer, InputTypeComposer } = require('graphql-compose')
+const {
+  TypeComposer,
+  InputTypeComposer,
+  GraphQLDate
+} = require('graphql-compose')
 const graphqlFields = require('graphql-fields')
 const sequelize = require('sequelize')
 
@@ -169,6 +173,24 @@ const parseQueryOptions = (attributes, args) => {
 }
 
 /**
+ * @typedef PaginationFields
+ * @property {Number} limit
+ * @property {Number} offset
+ */
+/**
+ * Parse paginate fields from args
+ * @param {Object} args Args from revolver
+ * @returns {PaginationFields}
+ */
+const parsePagination = args => {
+  const page = args.page || 1
+  const paginate = args.paginate || 25
+  const limit = paginate
+  const offset = paginate * (page - 1)
+  return { limit, offset }
+}
+
+/**
  * Sequelize Model
  * @external "Sequelize.Model"
  * @see http://docs.sequelizejs.com/class/lib/model.js~Model.html
@@ -182,10 +204,9 @@ const parseQueryOptions = (attributes, args) => {
  */
 const findAll = async (Model, args, info, where = {}) => {
   const options = parseQueryOptions(Object.keys(Model.rawAttributes), args)
-  const page = args.page || 1
-  const paginate = args.paginate || 25
-  options.limit = paginate
-  options.offset = paginate * (page - 1)
+  const { limit, offset } = parsePagination(args)
+  options.limit = limit
+  options.offset = offset
   options.attributes = getFilterAttributes(Model.rawAttributes, info)
   Object.keys(where).forEach(key => {
     if (typeof options.where[key] === 'undefined') {
@@ -329,11 +350,12 @@ const sequelizeTypeToGraphQLType = type => {
     STRING: GraphQLString,
     TEXT: GraphQLString,
     UUID: GraphQLString,
-    DATE: GraphQLString,
-    DATEONLY: GraphQLString,
+    DATE: GraphQLDate,
+    DATEONLY: GraphQLDate,
     TIME: GraphQLString,
     BIGINT: GraphQLString,
-    DECIMAL: GraphQLString
+    DECIMAL: GraphQLString,
+    VIRTUAL: GraphQLString
   }
   return attributes[type]
 }
@@ -609,6 +631,9 @@ const appendAssociations = (types, name, associations) => {
                   Object.keys(association.target.rawAttributes),
                   args
                 )
+                const { limit, offset } = parsePagination(args)
+                options.limit = limit
+                options.offset = offset
                 options.attributes = getFilterAttributes(
                   association.target.rawAttributes,
                   info
@@ -650,6 +675,9 @@ const appendAssociations = (types, name, associations) => {
                   Object.keys(association.target.rawAttributes),
                   args
                 )
+                const { limit, offset } = parsePagination(args)
+                options.limit = limit
+                options.offset = offset
                 options.attributes = getFilterAttributes(
                   association.target.rawAttributes,
                   info
