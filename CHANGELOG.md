@@ -1,3 +1,9 @@
+#### 1.1.1 (2018-06-21)
+
+##### Bug Fixes
+
+* **types:**  fix convert DOUBLE PRECISION ([46ad7489](https://github.com/lgaticaq/sequelize-graphql-tools/commit/46ad74896a4230d484af8a1fa05198e185e39463))
+
 ### 1.1.0 (2018-06-18)
 
 ##### Chores
