@@ -1,3 +1,9 @@
+#### 1.1.2 (2018-06-22)
+
+##### Bug Fixes
+
+* **associations:**  fix name filter name ([7e3e1b26](https://github.com/lgaticaq/sequelize-graphql-tools/commit/7e3e1b265787ac105f66d1167fcb65bb4f75258c))
+
 #### 1.1.1 (2018-06-21)
 
 ##### Bug Fixes
