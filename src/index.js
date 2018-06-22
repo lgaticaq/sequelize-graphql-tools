@@ -626,7 +626,7 @@ const appendAssociations = (types, name, associations) => {
               type: new GraphQLList(types[association.target.name].gqType),
               args: createQueryArgs(
                 association.target.rawAttributes,
-                `${association.source.name}${association.target.name}`
+                `${association.source.name}${key}`
               ),
               resolve: async (parent, args, ctx, info) => {
                 const options = parseQueryOptions(
@@ -649,7 +649,7 @@ const appendAssociations = (types, name, associations) => {
               type: types[association.target.name].gqType,
               args: createQueryArgs(
                 association.target.rawAttributes,
-                `${association.source.name}${association.target.name}`
+                `${association.source.name}${key}`
               ),
               resolve: async (parent, args, ctx, info) => {
                 const options = {}
