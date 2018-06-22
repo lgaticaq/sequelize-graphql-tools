@@ -1,6 +1,6 @@
 {
   "name": "sequelize-graphql-tools",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Utils to generate graphql schema, types, querys and mutations from sequelize models",
   "main": "src",
   "scripts": {
