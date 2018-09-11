@@ -10,7 +10,7 @@
 ## Installation
 
 ```bash
-npm i sequelize-graphql-tools
+npm i sequelize-graphql-tools graphql graphql-compose graphql-fields graphql-iso-date sequelize
 ```
 
 ## Use
