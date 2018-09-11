@@ -10,11 +10,8 @@ const {
   GraphQLObjectType,
   GraphQLString
 } = require('graphql/type')
-const {
-  TypeComposer,
-  InputTypeComposer,
-  GraphQLDate
-} = require('graphql-compose')
+const { TypeComposer, InputTypeComposer } = require('graphql-compose')
+const { GraphQLDate, GraphQLDateTime } = require('graphql-iso-date')
 const graphqlFields = require('graphql-fields')
 const sequelize = require('sequelize')
 
@@ -351,7 +348,7 @@ const sequelizeTypeToGraphQLType = type => {
     STRING: GraphQLString,
     TEXT: GraphQLString,
     UUID: GraphQLString,
-    DATE: GraphQLDate,
+    DATE: GraphQLDateTime,
     DATEONLY: GraphQLDate,
     TIME: GraphQLString,
     BIGINT: GraphQLString,
