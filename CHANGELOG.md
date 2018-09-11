@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/lgaticaq/sequelize-graphql-tools/compare/v1.1.2...v1.2.0) (2018-09-11)
+
+
+### Features
+
+* **types:** change dates to graphql-iso-date ([0dcc253](https://github.com/lgaticaq/sequelize-graphql-tools/commit/0dcc253))
+
 #### 1.1.2 (2018-06-22)
 
 ##### Bug Fixes
@@ -25,4 +32,3 @@
 ##### Chores
 
 * **project:**  initial release ([890d0ed6](https://github.com/lgaticaq/sequelize-graphql-tools/commit/890d0ed6c7f448d30b9ee400ab2e6bb7fc1eee75))
-
