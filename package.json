@@ -30,7 +30,9 @@
     "url": "https://github.com/lgaticaq/sequelize-graphql-tools/issues"
   },
   "homepage": "https://github.com/lgaticaq/sequelize-graphql-tools#readme",
-  "dependencies": {},
+  "dependencies": {
+    "graphql-iso-date": "3.5.0"
+  },
   "devDependencies": {
     "chai": "4.1.2",
     "eslint": "5.5.0",
