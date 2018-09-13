@@ -1,9 +1,9 @@
 # sequelize-graphql-tools
 
-[![npm version](https://img.shields.io/npm/v/sequelize-graphql-tools.svg)](https://www.npmjs.com/package/sequelize-graphql-tools)
-[![npm downloads](https://img.shields.io/npm/dm/sequelize-graphql-tools.svg)](https://www.npmjs.com/package/sequelize-graphql-tools)
-[![Maintainability](https://api.codeclimate.com/v1/badges/7d2accb39a80b8ee6573/maintainability)](https://codeclimate.com/github/lgaticaq/sequelize-graphql-tools/maintainability)
-[![devDependency Status](https://img.shields.io/david/dev/lgaticaq/sequelize-graphql-tools.svg)](https://david-dm.org/lgaticaq/sequelize-graphql-tools#info=devDependencies)
+[![npm version](https://img.shields.io/npm/v/@eclass/sequelize-graphql-tools.svg)](https://www.npmjs.com/package/@eclass/sequelize-graphql-tools)
+[![npm downloads](https://img.shields.io/npm/dm/@eclass/sequelize-graphql-tools.svg)](https://www.npmjs.com/package/@eclass/sequelize-graphql-tools)
+[![Maintainability](https://api.codeclimate.com/v1/badges/7d2accb39a80b8ee6573/maintainability)](https://codeclimate.com/github/eclass/sequelize-graphql-tools/maintainability)
+[![devDependency Status](https://img.shields.io/david/dev/eclass/sequelize-graphql-tools.svg)](https://david-dm.org/eclass/sequelize-graphql-tools#info=devDependencies)
 
 > Utils to generate graphql schema, types, querys and mutations from sequelize models
 
@@ -18,7 +18,7 @@ npm i sequelize-graphql-tools graphql graphql-compose graphql-fields graphql-iso
 ### One model to GraphqlType
 
 ```js
-const { modelToType } = require('sequelize-graphql-tools')
+const { modelToType } = require('@eclass/sequelize-graphql-tools')
 const db = require('./models') // Sequelize instance with all models imported
 
 const options = {
@@ -30,7 +30,7 @@ const UserTC = modelToType(db.User.name, db.User.rawAttributes, options)
 ### All model to GraphqlType
 
 ```js
-const { createTypes } = require('sequelize-graphql-tools')
+const { createTypes } = require('@eclass/sequelize-graphql-tools')
 const db = require('./models') // Sequelize instance with all models imported
 
 const options = {
@@ -46,7 +46,7 @@ const UserTC = allTypes.User
 ### Append associations
 
 ```js
-const { createTypes, appendAssociations } = require('sequelize-graphql-tools')
+const { createTypes, appendAssociations } = require('@eclass/sequelize-graphql-tools')
 const db = require('./models') // Sequelize instance with all models imported
 
 const options = {
@@ -65,7 +65,7 @@ Object.keys(allTypes).forEach(name => {
 
 ```js
 const { GraphQLSchema, GraphQLObjectType } = require('graphql/type')
-const { createTypes, appendAssociations } = require('sequelize-graphql-tools')
+const { createTypes, appendAssociations } = require('@eclass/sequelize-graphql-tools')
 const db = require('./models') // Sequelize instance with all models imported
 
 const options = {
