@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/eclass/sequelize-graphql-tools/compare/v1.2.0...v1.2.1) (2018-09-13)
+
+
+### Bug Fixes
+
+* **types:** revert Date types to GraphQLDate of graphql-compose ([b273908](https://github.com/eclass/sequelize-graphql-tools/commit/b273908))
+
 # [1.2.0](https://github.com/lgaticaq/sequelize-graphql-tools/compare/v1.1.2...v1.2.0) (2018-09-11)
 
 
