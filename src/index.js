@@ -33,6 +33,23 @@ const parseOutpuFields = (info, key = null) => {
 }
 
 /**
+ * Get output fields from GraphQL AST
+ * @param {Object} info GraphQL info resolver arg
+ * @param {String} key Optional key for change level
+ * @returns {Array} List of fields
+ */
+const parseAssociationOutpuFields = (info, key = null) => {
+  let outputFields = graphqlFields(info)
+  if (key) outputFields = outputFields[key]
+  return Object.keys(outputFields).reduce((fields, field) => {
+    if (Object.keys(outputFields[field]).length > 0) {
+      fields.push(field)
+    }
+    return fields
+  }, [])
+}
+
+/**
  * Get primary key from Sequelize model attributes
  * @param {Object} attributes Sequelize model attributes
  * @returns {String|null} Primary key field name
@@ -47,17 +64,31 @@ const getPrimaryKeyField = attributes => {
 }
 
 /**
+ * Sequelize Model
+ * @external "Sequelize.Model"
+ * @see http://docs.sequelizejs.com/class/lib/model.js~Model.html
+ */
+/**
  * Get attributes selected from info resolve argument
- * @param {Object} rawAttributes Sequelize model attributes
+ * @param {@external:"Sequelize.Model"} Model
  * @param {Object} info GraphQL info resolver arg
  * @param {String} key Optional key for change level
  * @returns {Array<String>} List of attributes
  */
-const getFilterAttributes = (rawAttributes, info, key = null) => {
-  const primaryKeyField = getPrimaryKeyField(rawAttributes)
+const getFilterAttributes = (Model, info, key = null) => {
+  const primaryKeyField = getPrimaryKeyField(Model.rawAttributes)
   const attributes = parseOutpuFields(info, key)
   if (!attributes.includes(primaryKeyField)) attributes.push(primaryKeyField)
-  return attributes
+  const associationAttributes = parseAssociationOutpuFields(info, key)
+  const associationAttributesMatches = Object.entries(
+    Model.associations
+  ).reduce((acc, [key, association]) => {
+    if (associationAttributes.includes(key)) {
+      acc.push(association.foreignKey)
+    }
+    return acc
+  }, [])
+  return [...attributes, ...associationAttributesMatches]
 }
 
 /**
@@ -204,7 +235,7 @@ const findAll = async (Model, args, info, where = {}) => {
   const { limit, offset } = parsePagination(args)
   options.limit = limit
   options.offset = offset
-  options.attributes = getFilterAttributes(Model.rawAttributes, info)
+  options.attributes = getFilterAttributes(Model, info)
   Object.keys(where).forEach(key => {
     if (typeof options.where[key] === 'undefined') {
       options.where[key] = where[key]
@@ -277,7 +308,7 @@ const createQueryResolvers = Model => {
           id: args.id
         }
       }
-      options.attributes = getFilterAttributes(Model.rawAttributes, info)
+      options.attributes = getFilterAttributes(Model, info)
       const doc = await Model.findOne(options)
       return doc
     }
@@ -634,10 +665,11 @@ const appendAssociations = (types, name, associations) => {
                 options.limit = limit
                 options.offset = offset
                 options.attributes = getFilterAttributes(
-                  association.target.rawAttributes,
+                  association.target,
                   info
                 )
-                const docs = await parent[`get${key}`](options)
+                options.attributes.push(association.foreignKey)
+                const docs = await parent[association.accessors.get](options)
                 return docs
               }
             }
@@ -651,14 +683,10 @@ const appendAssociations = (types, name, associations) => {
               resolve: async (parent, args, ctx, info) => {
                 const options = {}
                 options.attributes = getFilterAttributes(
-                  association.target.rawAttributes,
+                  association.target,
                   info
                 )
-                const _parent = await association.source.findOne({
-                  attributes: ['id', association.foreignKey],
-                  where: { id: parent.id }
-                })
-                const docs = await _parent[`get${key}`](options)
+                const docs = await parent[association.accessors.get](options)
                 return docs
               }
             }
@@ -678,10 +706,10 @@ const appendAssociations = (types, name, associations) => {
                 options.limit = limit
                 options.offset = offset
                 options.attributes = getFilterAttributes(
-                  association.target.rawAttributes,
+                  association.target,
                   info
                 )
-                const docs = await parent[`get${key}`](options)
+                const docs = await parent[association.accessors.get](options)
                 return docs
               }
             }
