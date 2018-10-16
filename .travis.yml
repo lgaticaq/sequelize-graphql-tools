@@ -2,13 +2,30 @@ language: node_js
 cache:
   directories:
     - ~/.npm
+    - .nyc_output
+node_js:
+  - "10"
 notifications:
   email: false
-node_js:
-  - '10'
-  - '8'
-after_success:
-  - npm run travis-deploy-once "npm run semantic-release"
-branches:
-  except:
-    - /^v\d+\.\d+\.\d+$/
+stages:
+  - lint
+  - test
+  - name: deploy
+    if: branch = master
+jobs:
+  include:
+    - stage: lint
+      name: eslint
+      script: npx eslint .
+    - stage: lint
+      name: commitlint
+      before_script:
+        - npm i -g @commitlint/travis-cli
+      script: commitlint-travis
+    - stage: test
+      node_js:
+        - "10"
+        - "8"
+      script: npm t
+    - stage: deploy
+      script: npx semantic-release
