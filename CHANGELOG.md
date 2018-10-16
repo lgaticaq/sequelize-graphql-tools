@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/lgaticaq/sequelize-graphql-tools/compare/v1.2.0...v2.0.0) (2018-10-16)
+
+
+### Bug Fixes
+
+* **resolvers:** fix associations resolvers ([a47cfaf](https://github.com/lgaticaq/sequelize-graphql-tools/commit/a47cfaf))
+
+
+### BREAKING CHANGES
+
+* **resolvers:** Change first argument to Model in getFilterAttributes
+
 # [1.2.0](https://github.com/lgaticaq/sequelize-graphql-tools/compare/v1.1.2...v1.2.0) (2018-09-11)
 
 
