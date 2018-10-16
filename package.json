@@ -9,8 +9,7 @@
     "commit": "commit",
     "pretest": "npm run lint -s && npm run format -s",
     "test": "echo 'no test'",
-    "semantic-release": "semantic-release",
-    "travis-deploy-once": "travis-deploy-once"
+    "semantic-release": "semantic-release"
   },
   "engines": {
     "node": ">=8"
@@ -53,8 +52,7 @@
     "nyc": "13.1.0",
     "nyc-config-common": "1.0.1",
     "prettier-standard": "8.0.1",
-    "semantic-release": "15.9.15",
-    "travis-deploy-once": "5.0.7"
+    "semantic-release": "15.9.15"
   },
   "peerDependencies": {
     "graphql": ">=0.13.0",
