@@ -91,7 +91,7 @@ const getFilterAttributes = (Model, info, key = null) => {
     }
     return acc
   }, [])
-  return [...attributes, ...associationAttributesMatches]
+  return [...new Set([...attributes, ...associationAttributesMatches])]
 }
 
 /**
@@ -671,7 +671,9 @@ const appendAssociations = (types, name, associations) => {
                   association.target,
                   info
                 )
-                options.attributes.push(association.foreignKey)
+                if (!options.attributes.includes(association.foreignKey)) {
+                  options.attributes.push(association.foreignKey)
+                }
                 const docs = await parent[association.accessors.get](options)
                 return docs
               }
