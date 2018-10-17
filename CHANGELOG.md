@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/lgaticaq/sequelize-graphql-tools/compare/v2.0.0...v2.0.1) (2018-10-17)
+
+
+### Bug Fixes
+
+* **attributes:** only append foreignKey in BelongsTo associations ([f63ec3f](https://github.com/lgaticaq/sequelize-graphql-tools/commit/f63ec3f))
+
 # [2.0.0](https://github.com/lgaticaq/sequelize-graphql-tools/compare/v1.2.0...v2.0.0) (2018-10-16)
 
 
