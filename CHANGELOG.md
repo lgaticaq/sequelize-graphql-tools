@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/eclass/sequelize-graphql-tools/compare/v2.0.1...v2.0.2) (2018-10-17)
+
+
+### Bug Fixes
+
+* **attributes:** remove duplicates ([eb3eb3f](https://github.com/eclass/sequelize-graphql-tools/commit/eb3eb3f))
+
 ## [2.0.1](https://github.com/eclass/sequelize-graphql-tools/compare/v2.0.0...v2.0.1) (2018-10-17)
 
 
