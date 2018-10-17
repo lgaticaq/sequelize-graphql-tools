@@ -86,7 +86,10 @@ const getFilterAttributes = (Model, info, key = null) => {
   const associationAttributesMatches = Object.entries(
     Model.associations
   ).reduce((acc, [key, association]) => {
-    if (associationAttributes.includes(key)) {
+    if (
+      associationAttributes.includes(key) &&
+      association.associationType === 'BelongsTo'
+    ) {
       acc.push(association.foreignKey)
     }
     return acc
