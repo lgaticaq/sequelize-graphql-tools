@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/eclass/sequelize-graphql-tools/compare/v2.0.2...v2.1.0) (2018-12-11)
+
+
+### Features
+
+* **association:** se agrega el HasOne ([0a93953](https://github.com/eclass/sequelize-graphql-tools/commit/0a93953))
+
 ## [2.0.2](https://github.com/eclass/sequelize-graphql-tools/compare/v2.0.1...v2.0.2) (2018-10-17)
 
 
