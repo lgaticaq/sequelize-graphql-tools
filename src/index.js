@@ -721,6 +721,26 @@ const appendAssociations = (types, name, associations) => {
                 return docs
               }
             }
+          } else if (association.associationType === 'HasOne') {
+            fields[key] = {
+              type: types[association.target.name].gqType,
+              args: createQueryArgs(
+                association.target.rawAttributes,
+                `${association.source.name}${key}`
+              ),
+              resolve: async (parent, args, ctx, info) => {
+                const options = {}
+                options.attributes = getFilterAttributes(
+                  association.target,
+                  info
+                )
+                if (!options.attributes.includes(association.foreignKey)) {
+                  options.attributes.push(association.foreignKey)
+                }
+                const docs = await parent[association.accessors.get](options)
+                return docs
+              }
+            }
           }
         } catch (err) {}
         return fields
