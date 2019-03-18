@@ -55,7 +55,7 @@
     "semantic-release": "15.13.3"
   },
   "peerDependencies": {
-    "graphql": ">=0.13.0",
+    "graphql": ">=14.1.1",
     "graphql-compose": ">=4.3.0",
     "graphql-fields": ">=1.0.0",
     "sequelize": ">=4.37.0"
