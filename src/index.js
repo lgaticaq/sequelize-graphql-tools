@@ -694,6 +694,9 @@ const appendAssociations = (types, name, associations) => {
                   association.target,
                   info
                 )
+                if (association.options.targetKey) {
+                  options.attributes.push(association.options.targetKey)
+                }
                 const docs = await parent[association.accessors.get](options)
                 return docs
               }
