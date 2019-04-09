@@ -261,7 +261,7 @@ const findAll = async (Model, args, info, where = {}) => {
 /**
  * Create orderBy EnumType
  * @param {Object} rawAttributes Sequelize model attributes
- * @param {Srting} name
+ * @param {String} name
  * @returns {@external:"GraphQLEnumType"}
  */
 const createOrderBy = (rawAttributes, name) => {
@@ -538,7 +538,7 @@ const attributeToFilters = attribute => {
 
 /**
  * Create input query filters from all model attributes
- * @param {Object} rawAttributes Sequelize model attributes
+ * @param {Object} attributes Sequelize model attributes
  * @returns {Object} Input query fields
  */
 const createInputQueryFilters = attributes => {
@@ -563,7 +563,7 @@ const paginationFields = {
 
 /**
  * Create generic input args (filter, orderBy, page, paginate)
- * @param {Object} rawAttributes Sequelize model attributes
+ * @param {Object} attributes Sequelize model attributes
  * @param {String} name Name for filter and order input types
  * @returns {Object} Object with filter, orderBy, page, paginate
  */
@@ -589,11 +589,6 @@ const createQueryArgs = (attributes, name) => {
   }
 }
 
-/**
- * @typedef FieldOptions
- * @property {Boolean} allowNull Remove GraphQLNonNull constraint
- * @property {Array<String>} ignore List of fields to ignore
- */
 /**
  * TypeComposer
  * @external "graphql-compose.TypeComposer"
