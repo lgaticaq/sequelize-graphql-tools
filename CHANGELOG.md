@@ -1,3 +1,16 @@
+# [3.0.0](https://github.com/eclass/sequelize-graphql-tools/compare/v2.1.0...v3.0.0) (2019-04-09)
+
+
+### Bug Fixes
+
+* **associations:** add targetKey in BelongsTo if exist ([7aa55cc](https://github.com/eclass/sequelize-graphql-tools/commit/7aa55cc))
+* **deps:** set graphql to >=14.1.1 ([1226be7](https://github.com/eclass/sequelize-graphql-tools/commit/1226be7))
+
+
+### BREAKING CHANGES
+
+* **deps:** Set graphql to >=14.1.1
+
 # [2.1.0](https://github.com/eclass/sequelize-graphql-tools/compare/v2.0.2...v2.1.0) (2018-12-11)
 
 

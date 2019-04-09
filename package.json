@@ -1,6 +1,6 @@
 {
   "name": "@eclass/sequelize-graphql-tools",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "Utils to generate graphql schema, types, querys and mutations from sequelize models",
   "main": "src",
   "scripts": {
