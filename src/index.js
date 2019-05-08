@@ -10,19 +10,18 @@ const {
   GraphQLObjectType,
   GraphQLString
 } = require('graphql/type')
-const {
-  TypeComposer,
-  InputTypeComposer,
-  GraphQLDate
-} = require('graphql-compose')
+const { schemaComposer, GraphQLDate } = require('graphql-compose')
 const graphqlFields = require('graphql-fields')
 const sequelize = require('sequelize')
 
 /**
+ * @typedef {import('graphql').GraphQLResolveInfo} GraphQLResolveInfo
+ */
+/**
  * Get output fields from GraphQL AST
- * @param {Object} info GraphQL info resolver arg
- * @param {String} key Optional key for change level
- * @returns {Array} List of fields
+ * @param {GraphQLResolveInfo} info - GraphQL info resolver arg
+ * @param {string} [key=null] - Optional key for change level
+ * @returns {Array<string>} - List of fields
  */
 const parseOutpuFields = (info, key = null) => {
   let outputFields = graphqlFields(info)
@@ -37,9 +36,9 @@ const parseOutpuFields = (info, key = null) => {
 
 /**
  * Get output fields from GraphQL AST
- * @param {Object} info GraphQL info resolver arg
- * @param {String} key Optional key for change level
- * @returns {Array} List of fields
+ * @param {GraphQLResolveInfo} info - GraphQL info resolver arg
+ * @param {string} [key=null] - Optional key for change level
+ * @returns {Array<string>} - List of fields
  */
 const parseAssociationOutpuFields = (info, key = null) => {
   let outputFields = graphqlFields(info)
@@ -55,7 +54,7 @@ const parseAssociationOutpuFields = (info, key = null) => {
 /**
  * Get primary key from Sequelize model attributes
  * @param {Object} attributes Sequelize model attributes
- * @returns {String|null} Primary key field name
+ * @returns {string|null} Primary key field name
  */
 const getPrimaryKeyField = attributes => {
   return Object.keys(attributes).reduce((primaryKey, field) => {
@@ -67,16 +66,11 @@ const getPrimaryKeyField = attributes => {
 }
 
 /**
- * Sequelize Model
- * @external "Sequelize.Model"
- * @see http://docs.sequelizejs.com/class/lib/model.js~Model.html
- */
-/**
  * Get attributes selected from info resolve argument
- * @param {@external:"Sequelize.Model"} Model
- * @param {Object} info GraphQL info resolver arg
- * @param {String} key Optional key for change level
- * @returns {Array<String>} List of attributes
+ * @param {Object} Model
+ * @param {GraphQLResolveInfo} info GraphQL info resolver arg
+ * @param {string} [key=null] - Optional key for change level
+ * @returns {Array<string>} List of attributes
  */
 const getFilterAttributes = (Model, info, key = null) => {
   const primaryKeyField = getPrimaryKeyField(Model.rawAttributes)
@@ -99,7 +93,7 @@ const getFilterAttributes = (Model, info, key = null) => {
 
 /**
  * Convert input args to Sequelize query options
- * @param {Array<String>} attributes List of model attributes name
+ * @param {Array<string>} attributes List of model attributes name
  * @param {Object} args Args from revolver
  * @returns {Object} Where filter
  */
@@ -207,13 +201,18 @@ const parseQueryOptions = (attributes, args) => {
 }
 
 /**
- * @typedef PaginationFields
- * @property {Number} limit
- * @property {Number} offset
+ * @typedef {Object} ArgsPaginationFields
+ * @property {number} [page]
+ * @property {number} [paginate]
+ */
+/**
+ * @typedef {Object} PaginationFields
+ * @property {number} limit
+ * @property {number} offset
  */
 /**
  * Parse paginate fields from args
- * @param {Object} args Args from revolver
+ * @param {ArgsPaginationFields} args Args from revolver
  * @returns {PaginationFields}
  */
 const parsePagination = args => {
@@ -225,16 +224,12 @@ const parsePagination = args => {
 }
 
 /**
- * Sequelize Model
- * @external "Sequelize.Model"
- * @see http://docs.sequelizejs.com/class/lib/model.js~Model.html
- */
-/**
  * Get filter docs from a model
- * @param {@external:"Sequelize.Model"} Model
+ * @param {Object} Model -
  * @param {Object} args Args from revolver
- * @param {Object} where Extra query filter
- * @returns {Array} List of docs
+ * @param {GraphQLResolveInfo} info - GraphQL info resolver arg
+ * @param {Object} [where={}] Extra query filter
+ * @returns {Promise<Array<Object>>} List of docs
  */
 const findAll = async (Model, args, info, where = {}) => {
   const options = parseQueryOptions(Object.keys(Model.rawAttributes), args)
@@ -254,15 +249,13 @@ const findAll = async (Model, args, info, where = {}) => {
 }
 
 /**
- * GraphQLEnumType
- * @external "GraphQLEnumType"
- * @see https://graphql.org/graphql-js/type/#graphqlenumtype
+ * @typedef {import('graphql').GraphQLEnumType} GraphQLEnumType
  */
 /**
  * Create orderBy EnumType
  * @param {Object} rawAttributes Sequelize model attributes
- * @param {String} name
- * @returns {@external:"GraphQLEnumType"}
+ * @param {string} name
+ * @returns {GraphQLEnumType}
  */
 const createOrderBy = (rawAttributes, name) => {
   const values = Object.keys(rawAttributes).reduce((acc, field) => {
@@ -279,7 +272,7 @@ const createOrderBy = (rawAttributes, name) => {
 
 /**
  * Get models attributes from graphql input args
- * @param {Array<String>} attributes List of model attributes name
+ * @param {Array<string>} attributes List of model attributes name
  * @param {Object} args Args from revolver
  * @returns {Object} Model attributes with values
  */
@@ -293,13 +286,8 @@ const getFields = (attributes, args) => {
 }
 
 /**
- * Sequelize Model
- * @external "Sequelize.Model"
- * @see http://docs.sequelizejs.com/class/lib/model.js~Model.html
- */
-/**
  * Create generic query resolvers (findAll and findOne)
- * @param {@external:"Sequelize.Model"} Model
+ * @param {Object} Model
  * @returns {Object} Object with findAll and findOne resolvers
  */
 const createQueryResolvers = Model => {
@@ -322,13 +310,8 @@ const createQueryResolvers = Model => {
 }
 
 /**
- * Sequelize Model
- * @external "Sequelize.Model"
- * @see http://docs.sequelizejs.com/class/lib/model.js~Model.html
- */
-/**
  * Create generic mutation resolvers (create, update y delete)
- * @param {@external:"Sequelize.Model"} Model
+ * @param {Object} Model
  * @returns {Object} Object with create, update y delete resolvers
  */
 const createMutationResolvers = Model => {
@@ -365,49 +348,50 @@ const createMutationResolvers = Model => {
 }
 
 /**
- * GraphQLScalarType
- * @external "GraphQLScalarType"
- * @see https://graphql.org/graphql-js/type/#graphqlscalartype
+ * @typedef {import('graphql').GraphQLScalarType} GraphQLScalarType
  */
 /**
  * Convert Sequelize attibute type to GraphQL type
- * @param {String} type
- * @returns {@external:"GraphQLScalarType"} GraphQLScalarType
+ * @param {string} type
+ * @returns {GraphQLScalarType} GraphQLScalarType
  */
 const sequelizeTypeToGraphQLType = type => {
-  const attributes = {
-    BOOLEAN: GraphQLBoolean,
-    FLOAT: GraphQLFloat,
-    DOUBLE: GraphQLFloat,
-    'DOUBLE PRECISION': GraphQLFloat,
-    INTEGER: GraphQLInt,
-    CHAR: GraphQLString,
-    STRING: GraphQLString,
-    TEXT: GraphQLString,
-    UUID: GraphQLString,
-    DATE: GraphQLDate,
-    DATEONLY: GraphQLDate,
-    TIME: GraphQLString,
-    BIGINT: GraphQLString,
-    DECIMAL: GraphQLString,
-    VIRTUAL: GraphQLString
-  }
-  return attributes[type]
+  const attributes = new Map([
+    ['BOOLEAN', GraphQLBoolean],
+    ['FLOAT', GraphQLFloat],
+    ['DOUBLE', GraphQLFloat],
+    ['DOUBLE PRECISION', GraphQLFloat],
+    ['INTEGER', GraphQLInt],
+    ['CHAR', GraphQLString],
+    ['STRING', GraphQLString],
+    ['TEXT', GraphQLString],
+    ['UUID', GraphQLString],
+    ['DATE', GraphQLDate],
+    ['DATEONLY', GraphQLDate],
+    ['TIME', GraphQLString],
+    ['BIGINT', GraphQLString],
+    ['DECIMAL', GraphQLString],
+    ['VIRTUAL', GraphQLString]
+  ])
+  return attributes.get(type)
 }
 
 /**
- * @typedef FieldOptions
- * @property {Boolean} allowNull Remove GraphQLNonNull constraint
- * @property {Array<String>} ignore List of fields to ignore
+ * @typedef {Object} FieldOptions
+ * @property {Boolean} [allowNull=false] Remove GraphQLNonNull constraint
+ * @property {Array<string>} [ignore=[]] List of fields to ignore
  */
 /**
  * Convert model attributes to graphql input fields
  * @param {Object} rawAttributes Sequelize model attributes
- * @param {FieldOptions} options Fields options
+ * @param {FieldOptions} [options] Fields options
  * @returns {Object}
  */
-const modelAttributesToGraphQLFields = (rawAttributes, options = {}) => {
-  const { allowNull = false, ignore = [] } = options
+const modelAttributesToGraphQLFields = (
+  rawAttributes,
+  options = { allowNull: false, ignore: [] }
+) => {
+  const { allowNull, ignore } = options
   return Object.keys(rawAttributes).reduce((acc, key) => {
     if (!ignore.includes(key)) {
       const attribute = rawAttributes[key]
@@ -429,8 +413,17 @@ const modelAttributesToGraphQLFields = (rawAttributes, options = {}) => {
 }
 
 /**
+ * @typedef {Object} SequelizeAttributeType
+ * @property {string} key
+ */
+/**
+ * @typedef {Object} SequelizeAttribute
+ * @property {string} fieldName
+ * @property {SequelizeAttributeType} type
+ */
+/**
  * Create input query filters from model attribute
- * @param {Object} attribute Sequelize model attribute
+ * @param {SequelizeAttribute} attribute Sequelize model attribute
  * @returns {Object} Object with query filters
  */
 const attributeToFilters = attribute => {
@@ -517,23 +510,23 @@ const attributeToFilters = attribute => {
       description: 'All values not ending with the given string.'
     }
   }
-  const attributes = {
-    BOOLEAN: booleanFilters,
-    FLOAT: numberFilters,
-    DOUBLE: numberFilters,
-    'DOUBLE PRECISION': numberFilters,
-    INTEGER: numberFilters,
-    CHAR: stringFilters,
-    STRING: stringFilters,
-    TEXT: stringFilters,
-    UUID: stringFilters,
-    DATE: stringFilters,
-    DATEONLY: stringFilters,
-    TIME: stringFilters,
-    BIGINT: stringFilters,
-    DECIMAL: stringFilters
-  }
-  return attributes[attribute.type.key]
+  const attributes = new Map([
+    ['BOOLEAN', booleanFilters],
+    ['FLOAT', numberFilters],
+    ['DOUBLE', numberFilters],
+    ['DOUBLE PRECISION', numberFilters],
+    ['INTEGER', numberFilters],
+    ['CHAR', stringFilters],
+    ['STRING', stringFilters],
+    ['TEXT', stringFilters],
+    ['UUID', stringFilters],
+    ['DATE', stringFilters],
+    ['DATEONLY', stringFilters],
+    ['TIME', stringFilters],
+    ['BIGINT', stringFilters],
+    ['DECIMAL', stringFilters]
+  ])
+  return attributes.get(attribute.type.key)
 }
 
 /**
@@ -549,26 +542,41 @@ const createInputQueryFilters = attributes => {
   }, {})
 }
 
-// Pagination fields to input query
-const paginationFields = {
-  page: {
-    type: GraphQLInt,
-    description: 'Set number page for pagination'
-  },
-  paginate: {
-    type: GraphQLInt,
-    description: 'Set number of elements per page for pagination'
+/**
+ * @typedef {Object} BasePaginationField
+ * @property {import('graphql').GraphQLScalarType} type
+ * @property {string} description
+ */
+/**
+ * @typedef {Object} PaginationField
+ * @property {BasePaginationField} page
+ * @property {BasePaginationField} paginate
+ */
+/**
+ * Pagination fields to input query
+ * @returns {PaginationField}
+ */
+const getPaginationFields = () => {
+  return {
+    page: {
+      type: GraphQLInt,
+      description: 'Set number page for pagination'
+    },
+    paginate: {
+      type: GraphQLInt,
+      description: 'Set number of elements per page for pagination'
+    }
   }
 }
 
 /**
  * Create generic input args (filter, orderBy, page, paginate)
  * @param {Object} attributes Sequelize model attributes
- * @param {String} name Name for filter and order input types
+ * @param {string} name Name for filter and order input types
  * @returns {Object} Object with filter, orderBy, page, paginate
  */
 const createQueryArgs = (attributes, name) => {
-  const filter = InputTypeComposer.create({
+  const filter = schemaComposer.createInputTC({
     name: `${name}Filter`,
     fields: createInputQueryFilters(attributes)
   })
@@ -578,31 +586,29 @@ const createQueryArgs = (attributes, name) => {
   })
   return {
     filter: {
-      type: filter.gqType,
+      type: filter.getType(),
       description: 'Filter query parameters'
     },
     orderBy: {
       type: createOrderBy(attributes, name),
       description: 'Set order by any model attribute'
     },
-    ...paginationFields
+    ...getPaginationFields()
   }
 }
 
 /**
- * TypeComposer
- * @external "graphql-compose.TypeComposer"
- * @see https://github.com/graphql-compose/graphql-compose/tree/master/docs/04-api-reference#typecomposer
+ * @typedef {import('graphql-compose').ObjectTypeComposer} ObjectTypeComposer
  */
 /**
  * Create GraphQL Type from Sequelize Model
- * @param {String} name Model name
+ * @param {string} name Model name
  * @param {Object} rawAttributes Sequelize model attributes
  * @param {FieldOptions} options Field options
- * @returns {@external:"graphql-compose.TypeComposer"}
+ * @returns {ObjectTypeComposer}
  */
 const modelToType = (name, rawAttributes, options) => {
-  return TypeComposer.create(
+  return schemaComposer.createObjectTC(
     new GraphQLObjectType({
       name: name,
       fields: modelAttributesToGraphQLFields(rawAttributes, options)
@@ -611,9 +617,14 @@ const modelToType = (name, rawAttributes, options) => {
 }
 
 /**
+ * @param {Object} target -
+ */
+const checkIsModel = target => !!target.getTableName
+
+/**
  * @typedef TypeOptions
- * @property {Array<String>} ignore List of models name to ignore
- * @property {Object} fields Field options by Model
+ * @property {Array<string>} [ignore=[]] List of models name to ignore
+ * @property {Object} [fields={}] Field options by Model
  */
 /**
  * Create all GraphQL Type from a list of Sequelize Model
@@ -621,13 +632,10 @@ const modelToType = (name, rawAttributes, options) => {
  * @param {TypeOptions} options Type options
  * @returns {Object} Object with all GraphQL types from models
  */
-const createTypes = (models, options = {}) => {
-  const { ignore = [], fields = {} } = options
+const createTypes = (models, options = { ignore: [], fields: {} }) => {
+  const { ignore, fields } = options
   return Object.keys(models).reduce((types, name) => {
-    if (
-      models[name].prototype instanceof sequelize.Model &&
-      !ignore.includes(name)
-    ) {
+    if (checkIsModel(models[name]) && !ignore.includes(name)) {
       types[name] = modelToType(
         models[name].name,
         models[name].rawAttributes,
@@ -641,7 +649,7 @@ const createTypes = (models, options = {}) => {
 /**
  * Add model relation fields
  * @param {Object} types All graphql types from models
- * @param {String} name Model Type name
+ * @param {string} name Model Type name
  * @param {Object} associations Model relations
  */
 const appendAssociations = (types, name, associations) => {
@@ -652,7 +660,7 @@ const appendAssociations = (types, name, associations) => {
         try {
           if (association.associationType === 'HasMany') {
             fields[key] = {
-              type: new GraphQLList(types[association.target.name].gqType),
+              type: new GraphQLList(types[association.target.name].getType()),
               args: createQueryArgs(
                 association.target.rawAttributes,
                 `${association.source.name}${key}`
@@ -678,7 +686,7 @@ const appendAssociations = (types, name, associations) => {
             }
           } else if (association.associationType === 'BelongsTo') {
             fields[key] = {
-              type: types[association.target.name].gqType,
+              type: types[association.target.name].getType(),
               args: createQueryArgs(
                 association.target.rawAttributes,
                 `${association.source.name}${key}`
@@ -698,7 +706,7 @@ const appendAssociations = (types, name, associations) => {
             }
           } else if (association.associationType === 'BelongsToMany') {
             fields[key] = {
-              type: new GraphQLList(types[association.target.name].gqType),
+              type: new GraphQLList(types[association.target.name].getType()),
               args: createQueryArgs(
                 association.target.rawAttributes,
                 `${association.source.name}${key}`
@@ -721,7 +729,7 @@ const appendAssociations = (types, name, associations) => {
             }
           } else if (association.associationType === 'HasOne') {
             fields[key] = {
-              type: types[association.target.name].gqType,
+              type: types[association.target.name].getType(),
               args: createQueryArgs(
                 association.target.rawAttributes,
                 `${association.source.name}${key}`
@@ -763,7 +771,7 @@ module.exports = {
   modelAttributesToGraphQLFields,
   attributeToFilters,
   createInputQueryFilters,
-  paginationFields,
+  getPaginationFields,
   createQueryArgs,
   createTypes,
   appendAssociations
