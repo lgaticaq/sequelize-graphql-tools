@@ -6,7 +6,6 @@
   "scripts": {
     "lint": "eslint . --fix",
     "format": "prettier-standard 'src/**/*.js'",
-    "commit": "commit",
     "pretest": "npm run lint -s && npm run format -s",
     "test": "echo 'no test'",
     "semantic-release": "semantic-release"
@@ -32,7 +31,6 @@
   "devDependencies": {
     "@commitlint/cli": "7.5.2",
     "@commitlint/config-conventional": "7.5.0",
-    "@commitlint/prompt-cli": "7.5.0",
     "@semantic-release/changelog": "3.0.2",
     "@semantic-release/git": "7.0.8",
     "@semantic-release/github": "5.2.10",
