@@ -1,3 +1,30 @@
+# [4.0.0](https://github.com/eclass/sequelize-graphql-tools/compare/v3.0.0...v4.0.0) (2019-05-08)
+
+
+### Features
+
+* **deps:** upgrade to graphql-compose v7 ([a0f2223](https://github.com/eclass/sequelize-graphql-tools/commit/a0f2223))
+
+
+### BREAKING CHANGES
+
+* **deps:** Migrate to graphql-compose v7.
+  Is necesary upgrade dependencie with `npm i -S graphql-compose@latest`
+
+  Migrate const paginationFields to function getPaginationFields()
+
+  Before:
+  const { paginationFields } = require('@eclass/sequelize-graphql-tools')
+  const { schemaComposer } = require('graphql-compose')
+  const InputTC = schemaComposer.createInputTC()
+  InputTC.addFields(paginationFields)
+
+  After:
+  const { getPaginationFields } = require('@eclass/sequelize-graphql-tools')
+  const { schemaComposer } = require('graphql-compose')
+  const InputTC = schemaComposer.createInputTC()
+  InputTC.addFields(getPaginationFields())
+
 # [3.0.0](https://github.com/eclass/sequelize-graphql-tools/compare/v2.1.0...v3.0.0) (2019-04-09)
 
 
