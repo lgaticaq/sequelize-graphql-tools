@@ -18,6 +18,12 @@ jobs:
       name: eslint
       script: npx eslint .
     - stage: lint
+      name: tslint
+      script: npx tslint --project . --fix 'src/**/*.ts'
+    - stage: lint
+      name: ts-compile-check
+      script: npx tsc -p tsconfig.json --noEmit
+    - stage: lint
       name: commitlint
       before_script:
         - npm i -g @commitlint/travis-cli
