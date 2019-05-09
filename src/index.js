@@ -639,7 +639,7 @@ const createTypes = (models, options = { ignore: [], fields: {} }) => {
       types[name] = modelToType(
         models[name].name,
         models[name].rawAttributes,
-        fields[name] || {}
+        fields[name]
       )
     }
     return types
