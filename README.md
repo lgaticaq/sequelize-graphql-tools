@@ -1,6 +1,7 @@
 # sequelize-graphql-tools
 
 [![npm version](https://img.shields.io/npm/v/@eclass/sequelize-graphql-tools.svg)](https://www.npmjs.com/package/@eclass/sequelize-graphql-tools)
+[![Build Status](https://travis-ci.org/eclass/sequelize-graphql-tools.svg?branch=master)](https://travis-ci.org/eclass/sequelize-graphql-tools)
 [![npm downloads](https://img.shields.io/npm/dm/@eclass/sequelize-graphql-tools.svg)](https://www.npmjs.com/package/@eclass/sequelize-graphql-tools)
 [![Maintainability](https://api.codeclimate.com/v1/badges/7d2accb39a80b8ee6573/maintainability)](https://codeclimate.com/github/eclass/sequelize-graphql-tools/maintainability)
 [![devDependency Status](https://img.shields.io/david/dev/eclass/sequelize-graphql-tools.svg)](https://david-dm.org/eclass/sequelize-graphql-tools#info=devDependencies)
