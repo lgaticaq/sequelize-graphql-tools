@@ -1,3 +1,10 @@
+## [4.0.1](https://github.com/eclass/sequelize-graphql-tools/compare/v4.0.0...v4.0.1) (2019-05-09)
+
+
+### Bug Fixes
+
+* **utils:** fix pass options to modelToType ([6db4291](https://github.com/eclass/sequelize-graphql-tools/commit/6db4291))
+
 # [4.0.0](https://github.com/eclass/sequelize-graphql-tools/compare/v3.0.0...v4.0.0) (2019-05-08)
 
 
