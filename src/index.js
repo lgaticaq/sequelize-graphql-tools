@@ -286,17 +286,40 @@ const getFields = (attributes, args) => {
 }
 
 /**
+ * @typedef {import('apollo-cache-control').CacheHint} CacheHint
+ */
+/**
+ * @param {GraphQLResolveInfo} info -
+ * @param {CacheHint} [cacheOptions=null] -
+ * @returns {void} -
+ */
+const setCacheHint = (info, cacheOptions) => {
+  if (
+    cacheOptions &&
+    typeof cacheOptions.maxAge !== 'undefined' &&
+    typeof cacheOptions.scope !== 'undefined' &&
+    info.cacheControl &&
+    info.cacheControl.setCacheHint
+  ) {
+    info.cacheControl.setCacheHint(cacheOptions)
+  }
+}
+
+/**
  * Create generic query resolvers (findAll and findOne)
  * @param {Object} Model
+ * @param {CacheHint} [cacheOptions=null] -
  * @returns {Object} Object with findAll and findOne resolvers
  */
-const createQueryResolvers = Model => {
+const createQueryResolvers = (Model, cacheOptions = null) => {
   return {
     findAll: async (root, args, ctx, info) => {
+      setCacheHint(info, cacheOptions)
       const docs = await findAll(Model, args, info)
       return docs
     },
     findOne: async (root, args, ctx, info) => {
+      setCacheHint(info, cacheOptions)
       const options = {
         where: {
           id: args.id

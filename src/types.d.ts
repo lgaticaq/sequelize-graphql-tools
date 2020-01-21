@@ -8,6 +8,7 @@ import {
 } from 'graphql'
 import { ObjectTypeComposer } from 'graphql-compose'
 import * as Sequelize from 'sequelize'
+import { CacheHint } from  'apollo-cache-control'
 
 export function parseOutpuFields (
   info: GraphQLResolveInfo,
@@ -71,7 +72,8 @@ export interface QueryResolvers<TInstance> {
 }
 
 export function createQueryResolvers<TInstance, TAttributes> (
-  Model: Sequelize.Model<TInstance, TAttributes>
+  Model: Sequelize.Model<TInstance, TAttributes>,
+  cacheOptions?: CacheHint
 ): QueryResolvers<TInstance>
 
 export interface MutationResolvers<TInstance> {
