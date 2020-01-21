@@ -1,3 +1,10 @@
+# [4.1.0](https://github.com/eclass/sequelize-graphql-tools/compare/v4.0.1...v4.1.0) (2020-01-21)
+
+
+### Features
+
+* **cache:** enable set custom cache in createQueryResolvers ([1baa044](https://github.com/eclass/sequelize-graphql-tools/commit/1baa044))
+
 ## [4.0.1](https://github.com/eclass/sequelize-graphql-tools/compare/v4.0.0...v4.0.1) (2019-05-09)
 
 
