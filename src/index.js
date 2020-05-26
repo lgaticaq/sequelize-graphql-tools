@@ -225,6 +225,20 @@ const parsePagination = args => {
 
 /**
  * Get filter docs from a model
+ * @param {GraphQLResolveInfo} info -
+ * @returns {string} -
+ */
+const getDebugComments = info => {
+  const operationType = info.operation.operation
+  const operationName = info.operation.name.value
+  /** @type {string} */
+  // @ts-ignore
+  const gqlVars = JSON.stringify(info.variableValues)
+  return `[graphql ${operationType} ${operationName}, variables: ${gqlVars}]`
+}
+
+/**
+ * Get filter docs from a model
  * @param {Object} Model -
  * @param {Object} args Args from revolver
  * @param {GraphQLResolveInfo} info - GraphQL info resolver arg
@@ -237,6 +251,7 @@ const findAll = async (Model, args, info, where = {}) => {
   options.limit = limit
   options.offset = offset
   options.attributes = getFilterAttributes(Model, info)
+  options.comment = getDebugComments(info)
   Object.keys(where).forEach(key => {
     if (typeof options.where[key] === 'undefined') {
       options.where[key] = where[key]
@@ -326,6 +341,7 @@ const createQueryResolvers = (Model, cacheOptions = null) => {
         }
       }
       options.attributes = getFilterAttributes(Model, info)
+      options.comment = getDebugComments(info)
       const doc = await Model.findOne(options)
       return doc
     }
@@ -339,31 +355,34 @@ const createQueryResolvers = (Model, cacheOptions = null) => {
  */
 const createMutationResolvers = Model => {
   return {
-    create: async (root, args) => {
+    create: async (root, args, ctx, info) => {
       const data = getFields(Object.keys(Model.rawAttributes), args)
-      const doc = await Model.create(data)
+      const doc = await Model.create(data, { comment: getDebugComments(info) })
       return doc
     },
-    update: async (root, args) => {
+    update: async (root, args, ctx, info) => {
       const doc = await Model.findOne({
         where: {
           id: args.id
-        }
+        },
+        comment: getDebugComments(info)
       })
       const data = getFields(Object.keys(Model.rawAttributes), args)
-      await doc.update(data)
+      await doc.update(data, { comment: getDebugComments(info) })
       return doc
     },
-    delete: async (root, args) => {
+    delete: async (root, args, ctx, info) => {
       const doc = await Model.findOne({
         where: {
-          id: args.id
+          id: args.id,
+          comment: getDebugComments(info)
         }
       })
       const result = await Model.softDelete({
         where: {
           id: args.id
-        }
+        },
+        comment: getDebugComments(info)
       })
       return result > 0 ? doc : null
     }
@@ -703,6 +722,7 @@ const appendAssociations = (types, name, associations) => {
                 if (!options.attributes.includes(association.foreignKey)) {
                   options.attributes.push(association.foreignKey)
                 }
+                options.comment = getDebugComments(info)
                 const docs = await parent[association.accessors.get](options)
                 return docs
               }
@@ -723,6 +743,7 @@ const appendAssociations = (types, name, associations) => {
                 if (association.options.targetKey) {
                   options.attributes.push(association.options.targetKey)
                 }
+                options.comment = getDebugComments(info)
                 const docs = await parent[association.accessors.get](options)
                 return docs
               }
@@ -746,6 +767,7 @@ const appendAssociations = (types, name, associations) => {
                   association.target,
                   info
                 )
+                options.comment = getDebugComments(info)
                 const docs = await parent[association.accessors.get](options)
                 return docs
               }
@@ -766,6 +788,7 @@ const appendAssociations = (types, name, associations) => {
                 if (!options.attributes.includes(association.foreignKey)) {
                   options.attributes.push(association.foreignKey)
                 }
+                options.comment = getDebugComments(info)
                 const docs = await parent[association.accessors.get](options)
                 return docs
               }
