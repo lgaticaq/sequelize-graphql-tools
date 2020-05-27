@@ -1,3 +1,10 @@
+## [4.2.1](https://github.com/eclass/sequelize-graphql-tools/compare/v4.2.0...v4.2.1) (2020-05-27)
+
+
+### Bug Fixes
+
+* **debug:** get operation name from selectionSet if not present ([b4aa6a8](https://github.com/eclass/sequelize-graphql-tools/commit/b4aa6a8))
+
 # [4.2.0](https://github.com/eclass/sequelize-graphql-tools/compare/v4.1.0...v4.2.0) (2020-05-26)
 
 
