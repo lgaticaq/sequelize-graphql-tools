@@ -230,7 +230,19 @@ const parsePagination = args => {
  */
 const getDebugComments = info => {
   const operationType = info.operation.operation
-  const operationName = info.operation.name.value
+  let operationName
+  if (info.operation.name) {
+    operationName = info.operation.name.value
+  } else if (
+    info.operation.selectionSet &&
+    info.operation.selectionSet.selections &&
+    info.operation.selectionSet.selections.length > 0 &&
+    // @ts-ignore
+    info.operation.selectionSet.selections[0].name
+  ) {
+    // @ts-ignore
+    operationName = info.operation.selectionSet.selections[0].name.value
+  }
   /** @type {string} */
   // @ts-ignore
   const gqlVars = JSON.stringify(info.variableValues)
