@@ -98,7 +98,8 @@ export interface MutationResolvers<TInstance> {
 }
 
 export function createMutationResolvers<TInstance, TAttributes> (
-  Model: Sequelize.Model<TInstance, TAttributes>
+  Model: Sequelize.Model<TInstance, TAttributes>,
+  sequelizeInstance: Sequelize.Sequelize
 ): MutationResolvers<TInstance>
 
 export function sequelizeTypeToGraphQLType (type: string): GraphQLScalarType

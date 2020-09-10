@@ -16,6 +16,7 @@ const sequelize = require('sequelize')
 
 /**
  * @typedef {import('graphql').GraphQLResolveInfo} GraphQLResolveInfo
+ * @typedef {import('sequelize').Sequelize} Sequelize
  */
 /**
  * Get output fields from GraphQL AST
@@ -363,40 +364,53 @@ const createQueryResolvers = (Model, cacheOptions = null) => {
 /**
  * Create generic mutation resolvers (create, update y delete)
  * @param {Object} Model
+ * @param {Sequelize} sequelizeInstance
  * @returns {Object} Object with create, update y delete resolvers
  */
-const createMutationResolvers = Model => {
+const createMutationResolvers = (Model, sequelizeInstance) => {
   return {
     create: async (root, args, ctx, info) => {
-      const data = getFields(Object.keys(Model.rawAttributes), args)
-      const doc = await Model.create(data, { comment: getDebugComments(info) })
-      return doc
+      return sequelizeInstance.transaction(async transaction => {
+        const data = getFields(Object.keys(Model.rawAttributes), args)
+        const doc = await Model.create(data, {
+          transaction,
+          comment: getDebugComments(info)
+        })
+        return doc
+      })
     },
     update: async (root, args, ctx, info) => {
-      const doc = await Model.findOne({
-        where: {
-          id: args.id
-        },
-        comment: getDebugComments(info)
+      return sequelizeInstance.transaction(async transaction => {
+        const doc = await Model.findOne({
+          where: {
+            id: args.id
+          },
+          comment: getDebugComments(info),
+          transaction
+        })
+        const data = getFields(Object.keys(Model.rawAttributes), args)
+        await doc.update(data, { transaction, comment: getDebugComments(info) })
+        return doc
       })
-      const data = getFields(Object.keys(Model.rawAttributes), args)
-      await doc.update(data, { comment: getDebugComments(info) })
-      return doc
     },
     delete: async (root, args, ctx, info) => {
-      const doc = await Model.findOne({
-        where: {
-          id: args.id,
-          comment: getDebugComments(info)
-        }
+      return sequelizeInstance.transaction(async transaction => {
+        const doc = await Model.findOne({
+          where: {
+            id: args.id
+          },
+          comment: getDebugComments(info),
+          transaction
+        })
+        const result = await Model.softDelete({
+          where: {
+            id: args.id
+          },
+          comment: getDebugComments(info),
+          transaction
+        })
+        return result > 0 ? doc : null
       })
-      const result = await Model.softDelete({
-        where: {
-          id: args.id
-        },
-        comment: getDebugComments(info)
-      })
-      return result > 0 ? doc : null
     }
   }
 }
