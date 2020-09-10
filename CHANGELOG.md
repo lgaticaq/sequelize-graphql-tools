@@ -1,3 +1,27 @@
+# [5.0.0](https://github.com/eclass/sequelize-graphql-tools/compare/v4.2.1...v5.0.0) (2020-09-10)
+
+
+### Bug Fixes
+
+* **mutation:** add transaction to all mutations ([9a9c44a](https://github.com/eclass/sequelize-graphql-tools/commit/9a9c44a))
+
+
+### BREAKING CHANGES
+
+* **mutation:** `createMutationResolvers` now require two arguments.
+
+The Model instance and the sequelize instance. The last is required to
+create a new transaction.
+
+Check the next snippet to upgrade.
+
+```js
+// Before
+const { create } = createMutationResolvers(Model)
+// Now
+const { create } = createMutationResolvers(Model, sequelize)
+```
+
 ## [4.2.1](https://github.com/eclass/sequelize-graphql-tools/compare/v4.2.0...v4.2.1) (2020-05-27)
 
 
