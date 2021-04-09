@@ -1,3 +1,10 @@
+## [5.0.1](https://github.com/eclass/sequelize-graphql-tools/compare/v5.0.0...v5.0.1) (2021-04-09)
+
+
+### Bug Fixes
+
+* **fields:** parseOutpuFields and parseAssociationOutpuFields ([4bf54f0](https://github.com/eclass/sequelize-graphql-tools/commit/4bf54f0))
+
 # [5.0.0](https://github.com/eclass/sequelize-graphql-tools/compare/v4.2.1...v5.0.0) (2020-09-10)
 
 
