@@ -26,13 +26,17 @@ const sequelize = require('sequelize')
  */
 const parseOutpuFields = (info, key = null) => {
   let outputFields = graphqlFields(info)
-  if (key) outputFields = outputFields[key]
-  return Object.keys(outputFields).reduce((fields, field) => {
-    if (Object.keys(outputFields[field]).length === 0) {
-      fields.push(field)
-    }
-    return fields
-  }, [])
+  if (key) {
+    outputFields = outputFields[key]
+  }
+  return Object.keys(outputFields)
+    .filter(field => field !== '__typename')
+    .reduce((fields, field) => {
+      if (Object.keys(outputFields[field]).length === 0) {
+        fields.push(field)
+      }
+      return fields
+    }, [])
 }
 
 /**
@@ -43,13 +47,17 @@ const parseOutpuFields = (info, key = null) => {
  */
 const parseAssociationOutpuFields = (info, key = null) => {
   let outputFields = graphqlFields(info)
-  if (key) outputFields = outputFields[key]
-  return Object.keys(outputFields).reduce((fields, field) => {
-    if (Object.keys(outputFields[field]).length > 0) {
-      fields.push(field)
-    }
-    return fields
-  }, [])
+  if (key) {
+    outputFields = outputFields[key]
+  }
+  return Object.keys(outputFields)
+    .filter(field => field !== '__typename')
+    .reduce((fields, field) => {
+      if (Object.keys(outputFields[field]).length > 0) {
+        fields.push(field)
+      }
+      return fields
+    }, [])
 }
 
 /**
@@ -76,7 +84,9 @@ const getPrimaryKeyField = attributes => {
 const getFilterAttributes = (Model, info, key = null) => {
   const primaryKeyField = getPrimaryKeyField(Model.rawAttributes)
   const attributes = parseOutpuFields(info, key)
-  if (!attributes.includes(primaryKeyField)) attributes.push(primaryKeyField)
+  if (!attributes.includes(primaryKeyField)) {
+    attributes.push(primaryKeyField)
+  }
   const associationAttributes = parseAssociationOutpuFields(info, key)
   const associationAttributesMatches = Object.entries(
     Model.associations
