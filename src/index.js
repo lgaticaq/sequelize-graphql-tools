@@ -19,6 +19,27 @@ const sequelize = require('sequelize')
  * @typedef {import('sequelize').Sequelize} Sequelize
  */
 /**
+ * Get output objects from GraphQL AST
+ *
+ * @param {GraphQLResolveInfo} info - GraphQL info resolver arg
+ * @param {string} [key=null] - Optional key for change level
+ * @returns {Array<string>} - List of objects
+ */
+const parseOutputObjects = (info, key = null) => {
+  let outputFields = graphqlFields(info)
+  if (key) {
+    outputFields = outputFields[key]
+  }
+  return Object.keys(outputFields)
+    .filter(field => field !== '__typename')
+    .reduce((fields, field) => {
+      if (Object.keys(outputFields[field]).length) {
+        fields.push(field)
+      }
+      return fields
+    }, [])
+}
+/**
  * Get output fields from GraphQL AST
  * @param {GraphQLResolveInfo} info - GraphQL info resolver arg
  * @param {string} [key=null] - Optional key for change level
@@ -841,6 +862,7 @@ const appendAssociations = (types, name, associations) => {
 
 module.exports = {
   parseOutpuFields,
+  parseOutputObjects,
   getPrimaryKeyField,
   getFilterAttributes,
   findAll,

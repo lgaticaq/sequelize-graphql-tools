@@ -1,3 +1,4 @@
+import { CacheHint } from  'apollo-cache-control'
 import {
   GraphQLEnumType,
   GraphQLField,
@@ -8,7 +9,6 @@ import {
 } from 'graphql'
 import { ObjectTypeComposer } from 'graphql-compose'
 import * as Sequelize from 'sequelize'
-import { CacheHint } from  'apollo-cache-control'
 
 export function parseOutpuFields (
   info: GraphQLResolveInfo,
