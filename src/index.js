@@ -19,27 +19,6 @@ const sequelize = require('sequelize')
  * @typedef {import('sequelize').Sequelize} Sequelize
  */
 /**
- * Get output objects from GraphQL AST
- *
- * @param {GraphQLResolveInfo} info - GraphQL info resolver arg
- * @param {string} [key=null] - Optional key for change level
- * @returns {Array<string>} - List of objects
- */
-const parseOutputObjects = (info, key = null) => {
-  let outputFields = graphqlFields(info)
-  if (key) {
-    outputFields = outputFields[key]
-  }
-  return Object.keys(outputFields)
-    .filter(field => field !== '__typename')
-    .reduce((fields, field) => {
-      if (Object.keys(outputFields[field]).length) {
-        fields.push(field)
-      }
-      return fields
-    }, [])
-}
-/**
  * Get output fields from GraphQL AST
  * @param {GraphQLResolveInfo} info - GraphQL info resolver arg
  * @param {string} [key=null] - Optional key for change level
@@ -365,16 +344,112 @@ const setCacheHint = (info, cacheOptions) => {
 }
 
 /**
+ * Get filter docs from a model
+ * @param {Object} Model -
+ * @param {Object} args Args from revolver
+ * @param {import('ioredis').Redis} redis - cache redis.
+ * @param {GraphQLResolveInfo} info - GraphQL info resolver arg
+ * @returns {Promise<Array<Object>>} List of docs
+ */
+const findAllFromCache = async (Model, cacheOptions, args, redis, info) => {
+  const options = parseQueryOptions(Object.keys(Model.rawAttributes), args)
+  const { limit, offset } = parsePagination(args)
+  options.limit = limit
+  options.offset = offset
+  options.attributes = getFilterAttributes(Model, info)
+  options.comment = getDebugComments(info)
+  options.raw = true
+
+  const FIVE_MINUTES = 60 * 5
+  let docs = []
+  const cacheKey = `cache:redis:all${
+    Model.name
+  }-limit-${limit}-offset-${offset}`
+  if (redis) {
+    const rawData = await redis.get(cacheKey)
+    if (rawData) {
+      return JSON.parse(rawData)
+    } else {
+      docs = await Model.findAll(options)
+      await redis.set(
+        cacheKey,
+        JSON.stringify(docs),
+        'ex',
+        cacheOptions.maxAge || FIVE_MINUTES
+      )
+    }
+  } else {
+    docs = await Model.findAll(options)
+  }
+  return docs
+}
+/**
+ * Get from a Model.
+ * @param {Object} Model -
+ * @param {Object} args Args from revolver
+ * @param {import('ioredis').Redis} redis - cache redis.
+ * @param {GraphQLResolveInfo} info - GraphQL info resolver arg
+ * @returns {Promise<Object>} List of docs
+ */
+const findFromCache = async (Model, cacheOptions, args, redis, info) => {
+  const options = {
+    where: {
+      id: args.id
+    }
+  }
+  options.attributes = getFilterAttributes(Model, info)
+  options.comment = getDebugComments(info)
+
+  const FIVE_MINUTES = 60 * 5
+  let doc = null
+  const cacheKey = `cache:redis:get${Model.name}-${args.id}`
+  if (redis) {
+    const rawData = await redis.get(cacheKey)
+    if (rawData) {
+      return JSON.parse(rawData)
+    } else {
+      doc = await Model.findOne(options)
+      await redis.set(
+        cacheKey,
+        JSON.stringify(doc),
+        'ex',
+        cacheOptions.maxAge || FIVE_MINUTES
+      )
+    }
+  } else {
+    doc = await Model.findOne(options)
+  }
+  return doc
+}
+
+/**
  * Create generic query resolvers (findAll and findOne)
  * @param {Object} Model
  * @param {CacheHint} [cacheOptions=null] -
+ * @param {import('ioredis').Redis} [redis=null] -
  * @returns {Object} Object with findAll and findOne resolvers
  */
-const createQueryResolvers = (Model, cacheOptions = null) => {
+const createQueryResolvers = (Model, cacheOptions = null, redis = null) => {
   return {
     findAll: async (root, args, ctx, info) => {
       setCacheHint(info, cacheOptions)
       const docs = await findAll(Model, args, info)
+      return docs
+    },
+    findAllCache: async (root, args, ctx, info) => {
+      setCacheHint(info, cacheOptions)
+      const docs = await findAllFromCache(
+        Model,
+        cacheOptions,
+        args,
+        redis,
+        info
+      )
+      return docs
+    },
+    findFromCache: async (root, args, ctx, info) => {
+      setCacheHint(info, cacheOptions)
+      const docs = await findFromCache(Model, cacheOptions, args, redis, info)
       return docs
     },
     findOne: async (root, args, ctx, info) => {
@@ -420,7 +495,10 @@ const createMutationResolvers = (Model, sequelizeInstance) => {
           transaction
         })
         const data = getFields(Object.keys(Model.rawAttributes), args)
-        await doc.update(data, { transaction, comment: getDebugComments(info) })
+        await doc.update(data, {
+          transaction,
+          comment: getDebugComments(info)
+        })
         return doc
       })
     },
@@ -862,7 +940,6 @@ const appendAssociations = (types, name, associations) => {
 
 module.exports = {
   parseOutpuFields,
-  parseOutputObjects,
   getPrimaryKeyField,
   getFilterAttributes,
   findAll,
